@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="UE5 Chaos Cloth">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE5 Chaos Cloth">
+<meta property="og:url" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/index.html">
+<meta property="og:site_name" content="Motylcc">
+<meta property="og:description" content="UE5 Chaos Cloth">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ChaosClothWorkflow.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ProxyGeo.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ProxySection.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/CreateCLoth.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/AttributeMask.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ProxyDrive.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/VisualizationOfCloth.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ChaosBackstop.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/BackstopTest.gif">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ClothPerformance.png">
+<meta property="og:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ChaosClothConfig.png">
+<meta property="article:published_time" content="2023-01-17T07:55:09.000Z">
+<meta property="article:modified_time" content="2024-02-19T07:09:35.358Z">
+<meta property="article:author" content="Motylcc">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/01/17/UE5-Chaos-Cloth/ChaosClothWorkflow.png">
+
+<link rel="canonical" href="http://example.com/2023/01/17/UE5-Chaos-Cloth/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>UE5 Chaos Cloth | Motylcc</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Motylcc</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/17/UE5-Chaos-Cloth/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Motylcc">
+      <meta itemprop="description" content="学习笔记">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Motylcc">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UE5 Chaos Cloth
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2023-01-17 15:55:09" itemprop="dateCreated datePublished" datetime="2023-01-17T15:55:09+08:00">2023-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-02-19 15:09:35" itemprop="dateModified" datetime="2024-02-19T15:09:35+08:00">2024-02-19</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>7.2k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>7 mins.</span>
+            </span>
+            <div class="post-description">UE5 Chaos Cloth</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="chaos-cloth的制作流程">Chaos Cloth的制作流程</h2>
+<center>
+<img src="/2023/01/17/UE5-Chaos-Cloth/ChaosClothWorkflow.png" width="90%">
+<div style="padding: 1px;">
+UE5布料制作流程
+</div>
+<br>
+</center>
+<ol type="1">
+<li><p><strong>制作布料几何体</strong>（Rig→ FBX）</p>
+<ul>
+<li><p>对于有厚度或模型比较复杂的布料几何体，通常是解算代理几何体（布料简模），再去驱动最终的布料几何体。</p></li>
+<li><p>给代理几何体分配一个与目标布料不同的材质（UE布料是根据材质区分不同的对象）</p>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/ProxyGeo.png" width="60%"></p>
+<div style="padding: 1px;">
+布料几何体及其代理
+</div>
+<p><br></p>
+</center></li>
+</ul></li>
+<li><p><strong>UE导入fbx资产</strong>（FBX → Skeletal Mesh + Physis
+Asset + Skeleton）</p></li>
+<li><p><strong>创建布料</strong> （进入SkeletalMesh编辑器面板）</p>
+<ul>
+<li>通过材质Section隐藏最终的布料几何体，方便选择代理几何体和观察解算效果</li>
+</ul>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/ProxySection.png" width="90%"></p>
+<div style="padding: 1px;">
+根据材质Section启用/禁用几何体
+</div>
+<p><br></p>
+</center>
+<ul>
+<li>选择目标几何体创建布料</li>
+</ul>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/CreateCLoth.png" width="90%"></p>
+<div style="padding: 1px;">
+创建布料
+</div>
+<p><br></p>
+</center></li>
+<li><p><strong>绘制布料的相关遮罩</strong>（Max Distance, Backstop,
+Backstop Radius等）</p></li>
+<li><p><strong>设置布料属性</strong>（Stiffness, Collision,
+Iteration等）</p>
+<p>关于Lo（最小值） / Hi（最大值）的设置</p>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/AttributeMask.png" width="60%"></p>
+<div style="padding: 1px;">
+绘制属性遮罩控制Lo/Hi值的分布
+</div>
+<p><br></p>
+</center>
+<p>如果在Masks中添加了布料属性的遮罩并且启用该遮罩，则 Hi
+的值才会生效。绘制值为0对应
+Lo的数值，绘制值为1对应Hi的数值。否则，默认只有Lo的值生效。通常，通过Lo值已经足够表达布料的物理特性。</p></li>
+<li><p><strong>使用代理几何体驱动目标布料</strong></p>
+<p>移除代理几何体的布料数据，然后在目标几何体上应用代理的布料数据</p>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/ProxyDrive.png" width="90%"></p>
+<div style="padding: 1px;">
+代理驱动布料几何体
+</div>
+<p><br></p>
+</center></li>
+</ol>
+<h2 id="key-concepts">key concepts</h2>
+<ul>
+<li><p>当布料物体的细分较大时，需要相应地提高迭代次数。</p></li>
+<li><p>通过<strong>Backstop</strong>可以有效地修复布料与碰撞体的穿插问题。</p></li>
+<li><p>善用 SkeletalMesh 编辑器的可视化功能去调试或排查问题。</p>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/VisualizationOfCloth.png" width="50%"></p>
+<div style="padding: 1px;">
+布料的可视化选项
+</div>
+<p><br></p>
+</center></li>
+<li><p>对于高度运动的物体，可以适当地提高解算器的迭代次数（Iterations），子步数（subdivisions
+）和碰撞体的摩擦力系数（Friction Coefficient）。</p></li>
+<li><p>解算器的迭代次数较低时，可能无法获得比较准确的约束（<strong>stiffness）</strong>和阻尼（<strong>damping</strong>）效果</p></li>
+<li><p>Convergence - Until you reach convergence keep stiffness settings
+at max.</p></li>
+</ul>
+<h2 id="三个重要的遮罩">三个重要的遮罩</h2>
+<ul>
+<li><p><strong>最大距离（Max
+Distance）</strong>：布料上的点从其动画位置移动的最远距离。</p></li>
+<li><p><strong>逆止半径（Backstop
+Radius）</strong>：逆止范围与最大距离（Max
+Distance）相交时，可防止布料上已绘制的点进入该球体区域。</p></li>
+<li><p><strong>逆止距离（Backstop
+Distance）</strong>：布料上的点与逆止球表面的距离。</p>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/ChaosBackstop.png" width="70%"></p>
+<div style="padding: 1px;">
+Backstop
+</div>
+<p><br></p>
+</center>
+<p>在每个布料顶点的后面（沿着法线的反方向）都有一个球形的逆止范围（逆止球），布料顶点到逆止球表面的距离为<strong>逆止距离</strong>。当逆止球与<strong>最大距离</strong>的范围相交时，布料顶点在解算过程中会被阻止进入逆止球的范围。当<strong>逆止距离</strong>设置为0时，则布料的顶点只能沿着法线的正方向运动。合理地设置<strong>逆止半径</strong>和<strong>逆止距离</strong>，可以有效地修复布料与碰撞体的穿插问题。</p>
+<center>
+<p><img src="/2023/01/17/UE5-Chaos-Cloth/BackstopTest.gif" width="90%"></p>
+<div style="padding: 1px;">
+Backstop测试
+</div>
+<p><br></p>
+</center></li>
+</ul>
+<h2 id="相关指令">相关指令</h2>
+<ul>
+<li><strong>Stat ChaosCloth</strong>：显示布料性能的相关数据</li>
+</ul>
+<center>
+<img src="/2023/01/17/UE5-Chaos-Cloth/ClothPerformance.png" width="90%">
+<div style="padding: 1px;">
+布料解算的开销统计
+</div>
+<br>
+</center>
+<ul>
+<li><p><strong>p.ClothPhysics
+0</strong>：关闭布料模拟，布料几何体将保持在最后一帧的状态</p></li>
+<li><p><strong>p.ClothPhysics 1</strong>：激活布料</p></li>
+</ul>
+<h2 id="布料配置说明">布料配置说明</h2>
+<center>
+<img src="/2023/01/17/UE5-Chaos-Cloth/ChaosClothConfig.png" width="60%">
+<div style="padding: 1px;">
+布料配置的相关参数
+</div>
+<br>
+</center>
+<h3 id="mass-properties">Mass Properties</h3>
+<p><strong>Mass Mode</strong></p>
+<ul>
+<li><p>Uniform: Every particle’s mass will be set to the value specified
+in the UniformMass setting.</p></li>
+<li><p>Total Mass: The total mass is distributed equally over all the
+particles.</p></li>
+<li><p>Density: A constant mass density is used. (Recommended)</p></li>
+</ul>
+<h3 id="material-properties">Material Properties</h3>
+<ul>
+<li><p><strong>Edge Stiffness</strong></p>
+<p>The stiffness of the edge constraints only uses lower than 1 values
+for very stretchy materials. Increase the iteration count for stiffer
+materials.</p></li>
+<li><p><strong>Bending Stiffness</strong></p>
+<p>The stiffness of the bending constraints. Increase the iteration
+count for stiffer materials</p></li>
+<li><p><strong>Use Bending Elements</strong></p>
+<p>Enable for more accurate bending element constraints instead of the
+faster cross-edge spring constraints used for controlling bending
+stiffness. Enabling will allow access to the Buckling Ratio/Stiffness
+parameters.</p></li>
+<li><p><strong>Buckling</strong></p>
+<p>This is a feature of the Bending Element constraint (and needs the
+UseBendingElements ticked in the config to be enabled). It allows the
+Bending Element constraint to weaken or strengthen for a better control
+of the cloth material’s creases depending on its two parameters:
+Buckling Ratio and Buckling Stiffness.</p></li>
+<li><p><strong>Buckling Ratio</strong></p>
+<p>Once the element has bent such that it's folded more than this ratio
+from its rest angle ("buckled"), it switches to using the Buckling
+Stiffness instead of the Bending Stiffness. When Buckling Ratio = 0, the
+Buckling Stiffness will never be used. When BucklingRatio = 1, the
+Buckling Stiffness will be used as soon as it is bent past its rest
+configuration.</p></li>
+<li><p><strong>Buckling Stiffness</strong></p>
+<p>Bending will use this stiffness instead of Bending Stiffness once the
+cloth has buckled, i.e., bent beyond a certain angle. Typically,
+Buckling Stiffness is set to be less than Bending Stiffness. Buckling
+Ratio determines the switch point between using Bending Stiffness and
+Buckling Stiffness.</p></li>
+<li><p><strong>Area Stiffness</strong></p>
+<p>The stiffness of the area preservation constraints. Increase the
+iteration count for stiffer materials.</p></li>
+</ul>
+<h3 id="long-range-attachment">Long Range Attachment</h3>
+<ul>
+<li><p><strong>Tether Stiffness</strong></p>
+<p>The tether stiffness of the long-range attachment constraints. The
+long-range attachment connects each of the cloth particles to its
+closest fixed point with a spring constraint. This can be used to
+compensate for a lack of stretch resistance when the iterations count is
+kept low for performance reasons. Can lead to an unnatural, pull-string
+puppet-like behavior. Use 0 to disable.</p></li>
+<li><p><strong>Tether Scale</strong></p>
+<p>The limit scale of the long-range attachment constraints (aka tether
+limit).</p></li>
+<li><p><strong>Use Geodesic Distance</strong></p>
+<p>Use geodesic instead of euclidean distance calculations for the Long
+Range Attachment constraint, which is slower at setup but more accurate
+at establishing the correct position and length of the tethers, and
+therefore is less prone to artifacts during the simulation.</p></li>
+</ul>
+<h3 id="collision-properties">Collision Properties</h3>
+<ul>
+<li><p><strong>Collision Thickness</strong></p>
+<p>The radius of cloth points when considering collisions against
+collider shapes.</p></li>
+<li><p><strong>Friction Coefficient</strong></p>
+<p>Friction coefficient for cloth - collider interaction.</p></li>
+<li><p><strong>Use CCD</strong></p>
+<p>Use continuous collision detection (CCD) to prevent any missed
+collisions between fast moving particles and colliders. This has a
+negative effect on performance compared to when resolving collisions
+without using CCD.</p></li>
+<li><p><strong>Use Self Collisions</strong></p>
+<p>Toggle to activate Self Collision Thickness, Friction and Self
+Intersections (below)</p></li>
+<li><p><strong>Self Collision Thickness</strong></p>
+<p>The radius of the spheres used in self collision.</p></li>
+<li><p><strong>Self Collision Friction</strong></p>
+<p>Friction coefficient for cloth - cloth interaction.</p></li>
+<li><p><strong>Use Self Intersections</strong></p>
+<p>Enable the self intersection resolution. This will try to fix any
+cloth intersections that are not handled by collision
+repulsions.</p></li>
+<li><p><strong>Use Legacy Backstop</strong> (Not recommended)</p>
+<p>Retained in case prior setups use it - The main difference is the
+backstop distance is calculated to the center of the backstop radius.
+New Backstop is calculated to edge of backstop sphere.</p></li>
+</ul>
+<h3 id="environmental-properties">Environmental Properties</h3>
+<ul>
+<li><p><strong>Damping Coefficient</strong></p>
+<p>The amount of damping applied to the cloth velocities. This Damping
+Coefficient works differently, as it is global and not at spring level.
+It reduces the particles' velocities depending on the group motion. It's
+similar in a way to drag in a uniform non-moving fluid: the higher the
+coefficient, the more viscous the fluid.</p></li>
+<li><p><strong>Local Damping Coefficient</strong></p>
+<p>The amount of damping for individual deviations of particle
+velocities from the global motion. It's more expensive than Damping
+Coefficient, but also provides better results. It's called Local because
+it acts in relation to the cloth's center of mass, allowing damp
+instabilities without causing the cloth to slow down as if it was
+underwater. Set it to 0 to disable it.</p></li>
+<li><p><strong>Use Point-Based Wind Model</strong></p>
+<p>Toggle on for legacy NvCloth setups.</p></li>
+<li><p><strong>Drag</strong></p>
+<p>The drag coefficient applying on each triangle.</p></li>
+<li><p><strong>Lift</strong></p>
+<p>Applied on each triangle perpendicular to airspeed. Mass has an
+effect with wind.</p></li>
+<li><p><strong>Gravity Scale</strong></p>
+<p>Scale factor applied to the world gravity and also to the clothing
+simulation. interactor gravity. Does not affect the gravity if set using
+the override below.</p></li>
+<li><p><strong>Gravity</strong></p>
+<p>The gravitational acceleration vector [cm/s^2].</p></li>
+<li><p><strong>Pressure</strong></p>
+<p>Adds a constant pressure force to each triangle of a simulated cloth.
+The effect can be modulated across the mesh via the Pressure paintable
+mask. The pressure force is always applied in the normal direction (use
+a negative value to push in the opposite direction).</p></li>
+</ul>
+<h3 id="animation-properties">Animation Properties</h3>
+<ul>
+<li><p><strong>Anim Drive Stiffness</strong></p>
+<p>The strength of the constraint driving the cloth towards the animated
+goal mesh.</p></li>
+<li><p><strong>Anim Drive Damping</strong></p>
+<p>The damp strength of the constraint driving the cloth towards the
+animated goal mesh.</p></li>
+<li><p><strong>Linear Velocity Scale</strong></p>
+<p>The amount of linear velocities sent to the local cloth space from
+the reference bone.</p></li>
+<li><p><strong>Angular Velocity Scale</strong></p>
+<p>The amount of angular velocities sent to the local cloth space from
+the reference bone.</p></li>
+<li><p><strong>Fictitious Angular Scale</strong></p>
+<p>The portion of the angular velocity that is used to calculate the
+strength of all fictitious forces (e.g. centrifugal force). This
+parameter is only having an effect of the portion of the reference
+bone’s angular velocity that has been removed from the simulation via
+the Angular Velocity Scale parameter. Values range from 0 to 2, with 0
+showing no centrifugal effect, 1 full centrifugal effect and 2 an
+overdriven centrifugal effect.</p></li>
+</ul>
+<h3 id="simulation">Simulation</h3>
+<ul>
+<li><p><strong>Iteration Count</strong>（解算器的迭代次数）</p>
+<p>提高迭代次数可以获得更精确的约束效果，但会增加CPU的开销。</p></li>
+<li><p><strong>Max Iteration Count</strong>（最大迭代次数）</p>
+<p>当帧率小于60fps时，解算器的迭代次数被限制在<strong>Max Iteration
+Count</strong>的值。当帧率大于60fps时，该参数无效。<br>
+With this parameter, IterationCount becomes the target number of
+iterations at 60fps. So, if your game currently runs at max 30fps, you
+will have to double the current value you are using. It will also
+dynamically increase internally as the framerate comes down, eg: 2
+iterations set at 60fps internally becomes 4 at 30fps, 6 at 20fps,
+...etc. or 1 at 120fps! MaxIterationCount is used to cap the increase in
+low framerates, so that you don't end up with 60 iterations at
+2fps.</p></li>
+<li><p><strong>Subdivision Count</strong>（解算器的子布数）</p>
+<p>可以提高碰撞和约束的精度，但会提高CPU的消耗（提升该值比增加迭代次数的消耗多50%）。对于高度运动的物体，适当增加子布数可以提高解算的稳定性。</p></li>
+</ul>
+<h2 id="reference">Reference</h2>
+<p><a target="_blank" rel="noopener" href="https://dev.epicgames.com/community/learning/tutorials/jOrv/unreal-engine-chaos-cloth-tool-properties-reference">Chaos
+Cloth Tool Properties Reference</a><br>
+<a target="_blank" rel="noopener" href="https://dev.epicgames.com/community/learning/tutorials/eDwk/unreal-engine-cloth-troubleshooting-and-debugging-tips">Cloth
+Troubleshooting and Debugging Tips</a><br>
+<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/5.1/zh-CN/clothing-tool-in-unreal-engine/">官方文档
+— 布料工具</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/01/12/UE5%E5%9C%B0%E5%BD%A2%E7%94%9F%E4%BA%A7%E6%B5%81%E7%A8%8B/" rel="prev" title="UE5地形生产流程">
+      <i class="fa fa-chevron-left"></i> UE5地形生产流程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/01/31/Depth-in-UE-Material/" rel="next" title="Depth in UE Material">
+      Depth in UE Material <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#chaos-cloth%E7%9A%84%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">Chaos Cloth的制作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#key-concepts"><span class="nav-number">2.</span> <span class="nav-text">key concepts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E9%87%8D%E8%A6%81%E7%9A%84%E9%81%AE%E7%BD%A9"><span class="nav-number">3.</span> <span class="nav-text">三个重要的遮罩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%8C%87%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">相关指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E6%96%99%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E"><span class="nav-number">5.</span> <span class="nav-text">布料配置说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mass-properties"><span class="nav-number">5.1.</span> <span class="nav-text">Mass Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#material-properties"><span class="nav-number">5.2.</span> <span class="nav-text">Material Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#long-range-attachment"><span class="nav-number">5.3.</span> <span class="nav-text">Long Range Attachment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#collision-properties"><span class="nav-number">5.4.</span> <span class="nav-text">Collision Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#environmental-properties"><span class="nav-number">5.5.</span> <span class="nav-text">Environmental Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#animation-properties"><span class="nav-number">5.6.</span> <span class="nav-text">Animation Properties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#simulation"><span class="nav-number">5.7.</span> <span class="nav-text">Simulation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Motylcc</p>
+  <div class="site-description" itemprop="description">学习笔记</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Motylcc</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="Symbols count total">22k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">20 mins.</span>
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="//cdn.jsdelivr.net/gh/theme-next/theme-next-three@1/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
